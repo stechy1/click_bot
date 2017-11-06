@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/click_bot.iml" filepath="$PROJECT_DIR$/.idea/modules/click_bot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/click_bot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/click_bot_main.iml" group="click_bot" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/click_bot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/click_bot_test.iml" group="click_bot" />
+    </modules>
+  </component>
+</project>
