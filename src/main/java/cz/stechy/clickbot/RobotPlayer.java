@@ -28,7 +28,7 @@ public final class RobotPlayer implements IActionPlayer {
     public RobotPlayer(IRobotController robot, List<Consumer<IRobotController>> actions,
         int iterations) {
         this.robot = robot;
-        this.actions = actions;
+            this.actions = actions;
         this.iterations = iterations;
     }
 
@@ -44,7 +44,10 @@ public final class RobotPlayer implements IActionPlayer {
         for (int i = 0; i < iterations; i++) {
             System.out.println("Iteration: " + (i+1));
             actions.forEach(action -> {
-                System.out.println(action);
+//                System.out.println(action);
+//                if (action instanceof Cycle) {
+//                    action.accept(robot);
+//                }
                 action.accept(robot);
             });
         }

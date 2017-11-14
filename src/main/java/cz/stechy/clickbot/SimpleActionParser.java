@@ -1,5 +1,6 @@
 package cz.stechy.clickbot;
 
+import cz.stechy.clickbot.actions.Cycle;
 import cz.stechy.clickbot.actions.Delay;
 import cz.stechy.clickbot.actions.LeftClick;
 import cz.stechy.clickbot.actions.RightClick;
@@ -36,6 +37,7 @@ public final class SimpleActionParser implements IActionParser {
     private static final String ATTRIBUTE_POINT_X = "x";
     private static final String ATTRIBUTE_POINT_Y = "y";
     private static final String ATTRIBUTE_POINT_CONSTANT = "constant";
+    private static final String ATTRIBUTE_ACTION_TYPE_CYCLE = "cycle";
     private static final String VALUE_POINT_CONSTANT_CONFIGURATION_1 = "configuration1";
     private static final String VALUE_POINT_CONSTANT_CONFIGURATION_2 = "configuration2";
     private static final String VALUE_POINT_CONSTANT_COAL_BAG = "coal_bag";
@@ -71,6 +73,39 @@ public final class SimpleActionParser implements IActionParser {
     // endregion
 
     // region Private methods
+
+    /**
+     * Hlavni parsovací metoda
+     *
+     * @param element {@link Element}
+     * @return {@link Consumer<IRobotController>}
+     */
+    private Consumer<IRobotController> parseMainElement(Element element) {
+
+        final String actionType = element.getAttribute(ATTRIBUTE_ACTION_TYPE);
+        switch (actionType) {
+            case VALUE_ACTION_TYPE_CLICK:
+                final String mouseButton = element.getAttribute(ATTRIBUTE_ACTION_TYPE_MOUSE_BUTTON);
+                switch (mouseButton) {
+                    case VALUE_ACTION_TYPE_MOUSE_BUTTON_LEFT:
+                        return parseLeftClickAction(element);
+                    case VALUE_ACTION_TYPE_MOUSE_BUTTON_RIGHT:
+                        return parseRightClickAction(element);
+                    default:
+                        throw new IllegalStateException("Narazil jsem na neočekávaný token");
+                }
+            case ATTRIBUTE_ACTION_TYPE_MOVE:
+                return parseMoveAction(element);
+            case ATTRIBUTE_ACTION_TYPE_WRITE:
+                return parseWriteAction(element);
+            case ATTRIBUTE_ACTION_TYPE_DELAY:
+                return parseDelay(element);
+            case ATTRIBUTE_ACTION_TYPE_CYCLE:
+                return parseCycle(element);
+            default:
+                throw new IllegalStateException("Narazil jsem na neočekávaný token");
+        }
+    }
 
     /**
      * Pomocná metoda, která naparsuje souřadnice bodu z XML elementu
@@ -131,6 +166,25 @@ public final class SimpleActionParser implements IActionParser {
         return new Delay(Integer.parseInt(element.getTextContent().trim()));
     }
 
+    private Consumer<IRobotController> parseCycle(Element parent) {
+        final int iterations = Integer.parseInt(parent.getAttribute(ATTRIBUTE_REPEAT));
+        final List<Consumer<IRobotController>> list = new ArrayList<>();
+
+        final NodeList childNodes = parent.getChildNodes();
+        final int count = childNodes.getLength();
+        for (int i = 0; i < count; i++) {
+            final Node node = childNodes.item(i);
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            final Element element = (Element) node;
+            list.add(parseMainElement(element));
+        }
+
+        return new Cycle(iterations, list);
+    }
+
     // endregion
 
     // region Public methods
@@ -142,7 +196,7 @@ public final class SimpleActionParser implements IActionParser {
         doc.getDocumentElement().normalize();
         final Node rootNode = doc.getDocumentElement();
         parseDefaultProperties((Element) rootNode);
-        final NodeList list = doc.getElementsByTagName(ELEMENT_ACTION);
+        final NodeList list = rootNode.getChildNodes();
         final int count = list.getLength();
         final List<Consumer<IRobotController>> actionList = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
@@ -152,35 +206,7 @@ public final class SimpleActionParser implements IActionParser {
             }
 
             final Element element = (Element) node;
-            final String actionType = element.getAttribute(ATTRIBUTE_ACTION_TYPE);
-            Consumer<IRobotController> action;
-            switch (actionType) {
-                case VALUE_ACTION_TYPE_CLICK:
-                    final String mouseButton = element.getAttribute(ATTRIBUTE_ACTION_TYPE_MOUSE_BUTTON);
-                    switch (mouseButton) {
-                        case VALUE_ACTION_TYPE_MOUSE_BUTTON_LEFT:
-                            action = parseLeftClickAction(element);
-                            break;
-                        case VALUE_ACTION_TYPE_MOUSE_BUTTON_RIGHT:
-                            action = parseRightClickAction(element);
-                            break;
-                        default:
-                            throw new IllegalStateException("Narazil jsem na neočekávaný token");
-                    }
-                    break;
-                case ATTRIBUTE_ACTION_TYPE_MOVE:
-                    action = parseMoveAction(element);
-                    break;
-                case ATTRIBUTE_ACTION_TYPE_WRITE:
-                    action = parseWriteAction(element);
-                    break;
-                case ATTRIBUTE_ACTION_TYPE_DELAY:
-                    action = parseDelay(element);
-                    break;
-                default:
-                    throw new IllegalStateException("Narazil jsem na neočekávaný token");
-            }
-            actionList.add(action);
+            actionList.add(parseMainElement(element));
         }
 
         return actionList;

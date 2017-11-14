@@ -5,6 +5,7 @@ Jedná se o jednoduchou verzi klikacího bota psaného v jazyce Java.
 - Nastavitelný počet opakování
 - Možnost uchovávat body kliknutí v samostatném souboru jako konstanty
 - Vlastní pojmenování konstant bodu
+- Vnořené smyčky
 
 ## Akce
 - Kliknutí levým i pravým tlačítkem myši
@@ -46,7 +47,7 @@ Ke spuštění je potřeba mít nainstalovanou Javu verze alespoň 8.
     <!-- Kliknutí levým pravým myši -->
     <action type="click" button="right">
         <!-- Nastavení bodu pomocí reference -->
-        <point name="constant_name_1/>
+        <point constant="constant_name_1"/>
     </action>
 
     <!-- Plynulý pohyb myši -->
@@ -63,4 +64,11 @@ Ke spuštění je potřeba mít nainstalovanou Javu verze alespoň 8.
 
     <!-- Napsání textu -->
     <action type="write">Toto se napíše</action>
+
+    <!-- Cyklus, lze vnořovat více cyklů do sebe -->
+    <action type="cycle" repeat="5">
+      <!-- Akce, které se provedou ve smyčce -->
+      <action type="write">Ahoj</action>
+    </action>
+</actions>
 ```
