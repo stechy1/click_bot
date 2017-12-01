@@ -6,7 +6,7 @@ import java.util.Map;
 public class EmptyConstantParser implements IConstantParser {
 
     @Override
-    public Map<String, Point> parse() throws Exception {
+    public Map<String, Object> parse() throws Exception {
         return new HashMap<>();
     }
 }

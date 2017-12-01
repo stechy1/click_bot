@@ -1,5 +1,6 @@
 package cz.stechy.clickbot;
 
+import cz.stechy.clickbot.actions.CheckScreen;
 import cz.stechy.clickbot.actions.Cycle;
 import cz.stechy.clickbot.actions.Delay;
 import cz.stechy.clickbot.actions.LeftClick;
@@ -38,6 +39,10 @@ public final class SimpleActionParser implements IActionParser {
     private static final String ATTRIBUTE_POINT_Y = "y";
     private static final String ATTRIBUTE_POINT_CONSTANT = "constant";
     private static final String ATTRIBUTE_ACTION_TYPE_CYCLE = "cycle";
+    private static final String ATTRIBUTE_ACTION_TYPE_CHECK_IMAGE = "check_image";
+    private static final String ATTRIBUTE_CHECK_IMAGE_WIDTH = "width";
+    private static final String ATTRIBUTE_CHECK_IMAGE_HEIGHT = "height";
+    private static final String ATTRIBUTE_CHECK_IMAGE_IMAGE = "image";
     private static final String VALUE_POINT_CONSTANT_CONFIGURATION_1 = "configuration1";
     private static final String VALUE_POINT_CONSTANT_CONFIGURATION_2 = "configuration2";
     private static final String VALUE_POINT_CONSTANT_COAL_BAG = "coal_bag";
@@ -102,6 +107,8 @@ public final class SimpleActionParser implements IActionParser {
                 return parseDelay(element);
             case ATTRIBUTE_ACTION_TYPE_CYCLE:
                 return parseCycle(element);
+            case ATTRIBUTE_ACTION_TYPE_CHECK_IMAGE:
+                return parseCheckScreen(element);
             default:
                 throw new IllegalStateException("Narazil jsem na neočekávaný token");
         }
@@ -121,7 +128,7 @@ public final class SimpleActionParser implements IActionParser {
         }
         if (point.hasAttribute(ATTRIBUTE_POINT_CONSTANT)) {
             String constant = point.getAttribute(ATTRIBUTE_POINT_CONSTANT);
-            return constantProvider.pointOf(constant);
+            return constantProvider.valueOf(constant);
         }
 
         final int x = Integer.parseInt(point.getAttribute(ATTRIBUTE_POINT_X));
@@ -183,6 +190,15 @@ public final class SimpleActionParser implements IActionParser {
         }
 
         return new Cycle(iterations, list);
+    }
+
+    private Consumer<IRobotController> parseCheckScreen(Element element) {
+        final Point coordinates = parsePoint(element);
+        final int width = Integer.parseInt(element.getAttribute(ATTRIBUTE_CHECK_IMAGE_WIDTH));
+        final int height = Integer.parseInt(element.getAttribute(ATTRIBUTE_CHECK_IMAGE_HEIGHT));
+        final String image = element.getAttribute(ATTRIBUTE_CHECK_IMAGE_IMAGE);
+        final String imagePath = constantProvider.valueOf(image);
+        return new CheckScreen(imagePath, coordinates, width, height);
     }
 
     // endregion

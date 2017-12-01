@@ -1,5 +1,7 @@
 package cz.stechy.clickbot;
 
+import java.awt.image.BufferedImage;
+
 public interface IRobotController {
 
     /**
@@ -61,4 +63,14 @@ public interface IRobotController {
      */
     void write(String s);
 
+    /**
+     * Vytvoří screenshot obrazovky
+     *
+     * @param x X-ová souřadnice levého horního rohu
+     * @param y Y-ová souřadnice levého horního rohu
+     * @param width Šířka screenshotu
+     * @param height Výška screenshotu
+     * @return {@link BufferedImage}
+     */
+    BufferedImage createScreenCapture(int x, int y, int width, int height);
 }

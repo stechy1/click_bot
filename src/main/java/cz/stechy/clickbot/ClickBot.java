@@ -28,8 +28,13 @@ public class ClickBot {
                 new FileInputStream(args[paramIndex++]));
         }
 
-        final Map<String, Point> pointMap = constantParser.parse();
-        final IConstantProvider constantProvider = pointMap::get;
+        final Map<String, Object> pointMap = constantParser.parse();
+        final IConstantProvider constantProvider = new IConstantProvider() {
+            @Override
+            public <T> T valueOf(String name) {
+                return (T) pointMap.get(name);
+            }
+        };
         final IActionParser parser = new SimpleActionParser(
             new FileInputStream(args[paramIndex++]), constantProvider);
         final List<Consumer<IRobotController>> actions = parser.parse();

@@ -1,9 +1,11 @@
 package cz.stechy.clickbot;
 
 import java.awt.AWTException;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Vylepšená verze třídy {@link Robot}, která rozšiřuje základní monosti.
@@ -96,13 +98,6 @@ public final class BetterRobot implements IRobotController {
 
         assert mousePosition.x - point.x == original.x;
         assert mousePosition.y - point.y == original.y;
-//        double dx = (mousePosition.x - point.x) / (double) n;
-//        double dy = (mousePosition.y - point.y) / (double) n;
-//        int dt = 100;
-//        for (int step = 1; step < n; step++) {
-//            pause(dt);
-//            setMousePosition(new Point((int) (point.x + dx * step), (int) (point.y + dy * step)));
-//        }
         pause(DELAY_CLICK_AFTER);
     }
 
@@ -122,6 +117,11 @@ public final class BetterRobot implements IRobotController {
                 robot.keyRelease(KeyEvent.VK_SHIFT);
             }
         }
+    }
+
+    @Override
+    public BufferedImage createScreenCapture(int x, int y, int width, int height) {
+        return robot.createScreenCapture(new Rectangle(x, y, width, height));
     }
 
     // endregion

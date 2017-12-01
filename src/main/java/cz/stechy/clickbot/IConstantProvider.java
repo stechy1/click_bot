@@ -6,6 +6,6 @@ package cz.stechy.clickbot;
 @FunctionalInterface
 public interface IConstantProvider {
 
-    Point pointOf(String name);
+    <T> T valueOf(String name);
 
 }

@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface IConstantParser {
 
-    Map<String, Point> parse() throws Exception;
+    Map<String, Object> parse() throws Exception;
 
 }
