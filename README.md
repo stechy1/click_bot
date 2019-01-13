@@ -6,6 +6,7 @@ Jedná se o jednoduchou verzi klikacího bota psaného v jazyce Java.
 - Možnost uchovávat body kliknutí v samostatném souboru jako konstanty
 - Vlastní pojmenování konstant bodu
 - Vnořené smyčky
+- Kontrola shody obrázku (porovnávaný obrázek musí být bez alfa kanálu = 24bitový)
 
 ## Akce
 - Kliknutí levým i pravým tlačítkem myši
@@ -28,10 +29,15 @@ Ke spuštění je potřeba mít nainstalovanou Javu verze alespoň 8.
 ### Struktura souboru s konstantami bodů
 ```
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<points>
-    <point name="constant_name_1" x="560" y="528"/>
-    <point name="constant_name_2" x="600" y="528"/>
-</points>
+<constants>
+  <points>
+      <point name="constant_name_1" x="560" y="528"/>
+      <point name="constant_name_2" x="600" y="528"/>
+  </points>
+  <images>
+    <image name="image_name_1">relative_path_from_jar.png</image>
+  </images>
+</constants>
 ```
 
 ### Struktura souboru s jednotlivými akcemi
@@ -70,5 +76,10 @@ Ke spuštění je potřeba mít nainstalovanou Javu verze alespoň 8.
       <!-- Akce, které se provedou ve smyčce -->
       <action type="write">Ahoj</action>
     </action>
+    
+    <!-- Kontrola obrázku -->
+      <action type="check_image" width="16" height="16" image="krizek">
+        <point constant="souradnice_leveho_horniho_rohu" />
+      </action>
 </actions>
 ```
